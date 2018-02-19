@@ -1,29 +1,45 @@
 'use strict';
 
-var browserify = require('browserify');
-var gulp = require('gulp');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var uglify = require('gulp-uglify');
-var sourcemaps = require('gulp-sourcemaps');
-var log = require('fancy-log');
-var tsify = require('tsify');
-var sass = require('gulp-sass');
-var htmlmin = require('gulp-htmlmin');
+const browserify = require('browserify');
+const gulp = require('gulp');
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const uglify = require('gulp-uglify');
+const sourcemaps = require('gulp-sourcemaps');
+const log = require('fancy-log');
+const tsify = require('tsify');
+const sass = require('gulp-sass');
+const htmlmin = require('gulp-htmlmin');
+const glob = require('glob');
+const es = require('event-stream');
+const rename = require('gulp-rename');
 
-gulp.task('ts', function () {
-	return browserify()
-		.add('./src/ts/index.ts')
-		.plugin(tsify)
-		.bundle()
-		.on('error', error => { log.error(error.toString()); })
-		.pipe(source('bundle.js'))
-		.pipe(buffer())
-		.pipe(sourcemaps.init({ loadMaps: true, largeFile: true }))
-			.pipe(uglify())
-			.on('error', error => { log.error(error.toString()); })
-		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest('./dist/js/'));
+gulp.task('ts', function (done) {
+	glob('./src/ts/main-**.ts', function (err, files) {
+		if (err) done(err);
+
+		var tasks = files.map(function (entry) {
+			return browserify({ entries: [entry] })
+				.plugin(tsify)
+				.bundle()
+				.on('error', error => { log.error(error.toString()); })
+				.pipe(source(entry))
+				.pipe(rename(function (opt) {
+					opt.dirname = '';
+					opt.extname = '.min.js';
+					opt.basename = opt.basename.replace(/^main\-/, '')
+					return opt;
+				}))
+				.pipe(buffer())
+				.pipe(sourcemaps.init({ loadMaps: true, largeFile: true }))
+					.pipe(uglify())
+					.on('error', error => { log.error(error.toString()); })
+				.pipe(sourcemaps.write('./'))
+				.pipe(gulp.dest('./dist/js/'));
+
+			es.merge(tasks).on('end', done);
+		});
+	});
 });
 
 gulp.task('sass', function () {
