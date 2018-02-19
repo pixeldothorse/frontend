@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es5",
+		"allowJs": true,
+		"noImplicitAny": true,
+		"removeComments": true,
+		"preserveConstEnums": true,
+		"sourceMap": true,
+		"strictNullChecks": true,
+		"outDir": "dist/js"
+	},
+	"include": [
+		"src/ts/**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"**/*.spec.ts"
+	],
+	"awesomeTypescriptLoaderOptions": {
+		"useCache": true
+	}
+}
