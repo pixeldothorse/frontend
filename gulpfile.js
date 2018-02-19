@@ -41,9 +41,9 @@ gulp.task('ts', function (done) {
 					.on('error', error => { log.error(error.toString()); })
 				.pipe(sourcemaps.write('./'))
 				.pipe(gulp.dest('./dist/js/'));
-
-			return es.merge(tasks).on('end', done);
 		});
+
+		es.merge(tasks).on('end', done);
 	});
 });
 
