@@ -58,7 +58,8 @@ gulp.task('sass', function (done) {
 				done(error);
 			}))
 		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest('./dist/css/'));
+		.pipe(gulp.dest('./dist/css/'))
+		.on('end', done);
 });
 
 gulp.task('html', function () {
