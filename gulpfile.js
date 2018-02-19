@@ -37,7 +37,7 @@ gulp.task('ts', function (done) {
 				.pipe(sourcemaps.write('./'))
 				.pipe(gulp.dest('./dist/js/'));
 
-			es.merge(tasks).on('end', done);
+			return es.merge(tasks).on('end', done);
 		});
 	});
 });
