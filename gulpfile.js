@@ -31,7 +31,7 @@ gulp.task('ts', function (done) {
 					return opt;
 				}))
 				.pipe(buffer())
-				.pipe(sourcemaps.init({ loadMaps: true, largeFile: true }))
+				.pipe(sourcemaps.init({ largeFile: true }))
 					.pipe(uglify())
 					.on('error', error => { log.error(error.toString()); })
 				.pipe(sourcemaps.write('./'))
