@@ -13,6 +13,7 @@ const htmlmin = require('gulp-htmlmin');
 const glob = require('glob');
 const es = require('event-stream');
 const rename = require('gulp-rename');
+const babelify = require('babelify');
 
 gulp.task('ts', function (done) {
 	glob('./src/ts/main-**.ts', function (err, files) {
@@ -21,6 +22,10 @@ gulp.task('ts', function (done) {
 		var tasks = files.map(function (entry) {
 			return browserify({ entries: [entry] })
 				.plugin(tsify)
+				.transform(babelify, {
+					presets: ['env'],
+					extensions: ['.tsx', '.ts']
+				})
 				.bundle()
 				.on('error', error => { log.error(error.toString()); })
 				.pipe(source(entry))
