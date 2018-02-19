@@ -27,7 +27,7 @@ gulp.task('ts', function (done) {
 					extensions: ['.tsx', '.ts']
 				})
 				.bundle()
-				.on('error', error => { log.error(error.toString()); })
+				.on('error', error => { error.showStack = false; done(error); })
 				.pipe(source(entry))
 				.pipe(rename(function (opt) {
 					opt.dirname = '';
@@ -38,7 +38,7 @@ gulp.task('ts', function (done) {
 				.pipe(buffer())
 				.pipe(sourcemaps.init({ largeFile: true }))
 					.pipe(uglify())
-					.on('error', error => { log.error(error.toString()); })
+					.on('error', error => { error.showStack = false; done(error); })
 				.pipe(sourcemaps.write('./'))
 				.pipe(gulp.dest('./dist/js/'));
 		});
@@ -47,10 +47,16 @@ gulp.task('ts', function (done) {
 	});
 });
 
-gulp.task('sass', function () {
-	return gulp.src(['./src/scss/*.scss', './src/scss/**/*.scss'])
+gulp.task('sass', function (done) {
+	gulp.src(['./src/scss/*.scss', './src/scss/**/*.scss'])
 		.pipe(sourcemaps.init())
-			.pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
+			.pipe(sass({ outputStyle: 'compressed' }).on('error', error => {
+				error.showStack = false;
+				error.toString = function() {
+					return this.message;
+				};
+				done(error);
+			}))
 		.pipe(sourcemaps.write('./'))
 		.pipe(gulp.dest('./dist/css/'));
 });
