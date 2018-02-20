@@ -1,7 +1,7 @@
 {
-  "name": "horseville-frontend",
+  "name": "pixeldothorse-frontend",
   "version": "0.0.1",
-  "description": "The web frontend for the Horseville game",
+  "description": "The web frontend for the Pixel.Horse game",
   "main": "index.js",
   "dependencies": {
     "pixi.js": "^4.7.0"
@@ -37,12 +37,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/horseville/frontend.git"
+    "url": "git+https://github.com/pixeldothorse/frontend.git"
   },
-  "author": "Horseville Team",
+  "author": "Pixel.Horse Team",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/horseville/frontend/issues"
+    "url": "https://github.com/pixeldothorse/frontend/issues"
   },
-  "homepage": "https://github.com/horseville/frontend#readme"
+  "homepage": "https://github.com/pixeldothorse/frontend#readme"
 }
