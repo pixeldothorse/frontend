@@ -14,6 +14,7 @@ const glob = require('glob');
 const es = require('event-stream');
 const rename = require('gulp-rename');
 const babelify = require('babelify');
+const autoprefixer = require('gulp-autoprefixer');
 
 gulp.task('ts', function (done) {
 	glob('./src/ts/main-**.ts', function (err, files) {
@@ -57,6 +58,7 @@ gulp.task('sass', function (done) {
 				};
 				done(error);
 			}))
+			.pipe(autoprefixer())
 		.pipe(sourcemaps.write('./'))
 		.pipe(gulp.dest('./dist/css/'))
 		.on('end', done);
