@@ -25,6 +25,7 @@
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.0",
     "gulp-watch": "^5.0.0",
+    "sorcery": "^0.10.0",
     "tsify": "^3.0.4",
     "tslint": "^5.9.1",
     "tslint-config-standard": "^7.0.0",

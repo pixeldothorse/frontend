@@ -16,12 +16,17 @@ const rename = require('gulp-rename');
 const babelify = require('babelify');
 const autoprefixer = require('gulp-autoprefixer');
 const watch = require('gulp-watch');
+const sorcery = require('sorcery');
 
 gulp.task('build:ts', function (done) {
 	let errors = [];
+	let sourceMapsBuilt = false;
 
 	glob('./src/ts/main-**.ts', function (err, files) {
-		if (err) done(err);
+		if (err) {
+			done(err);
+			return;
+		}
 
 		let tasks = files.map(function (entry) {
 			return browserify({ entries: [entry], debug: true })
@@ -43,9 +48,28 @@ gulp.task('build:ts', function (done) {
 				}))
 				.pipe(buffer())
 				.pipe(sourcemaps.init({ largeFile: true, loadMaps: true }))
-					.pipe(uglify())
+					//.pipe(uglify())
 				.pipe(sourcemaps.write('./'))
-				.pipe(gulp.dest('./dist/js/'));
+				.pipe(gulp.dest('./dist/js/'))
+				.on('finish', function() {
+					if (sourceMapsBuilt) return;
+
+					sourceMapsBuilt = true;
+
+					glob('./dist/js/**.min.js', function(err, files) {
+						if (err) {
+							errors.push(err.message);
+							return;
+						}
+
+						files.map(function (file) {
+							sorcery.load(file).then(function (chain) {
+								let map = chain.apply();
+								chain.write();
+							}).catch(() => {});
+						});
+					});
+				});
 		});
 
 		es.merge(tasks).on('end', () => {
