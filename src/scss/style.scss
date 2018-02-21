@@ -1,9 +1,9 @@
-$color1 : #ff0000;
+$color1 : #123;
 $color2 : #00cc00;
 
 h1 {
 	color: $color1;
 	background-color: $color2;
 	padding: 0.5em;
-	transform: translate(-50%, -50%);
+	transform: rotate3d(1, 1, 1, 45deg);
 }
