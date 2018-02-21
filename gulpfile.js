@@ -18,10 +18,12 @@ const autoprefixer = require('gulp-autoprefixer');
 const watch = require('gulp-watch');
 
 gulp.task('build:ts', function (done) {
+	let errors = [];
+
 	glob('./src/ts/main-**.ts', function (err, files) {
 		if (err) done(err);
 
-		var tasks = files.map(function (entry) {
+		let tasks = files.map(function (entry) {
 			return browserify({ entries: [entry], debug: true })
 				.plugin(tsify)
 				.transform(babelify, {
@@ -29,7 +31,9 @@ gulp.task('build:ts', function (done) {
 					extensions: ['.tsx', '.ts']
 				})
 				.bundle()
-				.on('error', error => { error.showStack = false; done(error); })
+				.on('error', error => {
+					if (!errors.includes(error.message)) errors.push(error.message);
+				})
 				.pipe(source(entry))
 				.pipe(rename(function (opt) {
 					opt.dirname = '';
@@ -40,12 +44,20 @@ gulp.task('build:ts', function (done) {
 				.pipe(buffer())
 				.pipe(sourcemaps.init({ largeFile: true, loadMaps: true }))
 					.pipe(uglify())
-					.on('error', error => { error.showStack = false; done(error); })
 				.pipe(sourcemaps.write('./'))
 				.pipe(gulp.dest('./dist/js/'));
 		});
 
-		es.merge(tasks).on('end', done);
+		es.merge(tasks).on('end', () => {
+			let err;
+
+			if (errors.length > 0) {
+				err = new Error('\n' + errors.join('\n'));
+				err.showStack = false;
+			}
+
+			done(errors.length > 0 ? err : undefined);
+		});
 	});
 });
 
