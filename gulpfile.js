@@ -93,4 +93,4 @@ gulp.task('watch:html', function() {
 
 gulp.task('watch', ['watch:ts', 'watch:sass', 'watch:html']);
 
-gulp.task('default', ['build']);
+gulp.task('default', ['watch']);
