@@ -130,19 +130,19 @@ gulp.task('build', ['build:ts', 'build:sass', 'build:html']);
 gulp.task('watch:ts', function() {
 	watch(['./src/ts/*.ts', './src/ts/**/*.ts'], function() {
 		gulp.start('build:ts');
-	})
+	});
 });
 
 gulp.task('watch:sass', function() {
 	watch(['./src/scss/*.scss', './src/scss/**/*.scss'], function() {
 		gulp.start('build:sass');
-	})
+	});
 });
 
 gulp.task('watch:html', function() {
 	watch(['src/*.html', 'src/**/*.html'], function() {
 		gulp.start('build:html');
-	})
+	});
 });
 
 gulp.task('watch', ['build', 'watch:ts', 'watch:sass', 'watch:html']);
