@@ -21,7 +21,7 @@ gulp.task('ts', function (done) {
 		if (err) done(err);
 
 		var tasks = files.map(function (entry) {
-			return browserify({ entries: [entry] })
+			return browserify({ entries: [entry], debug: true })
 				.plugin(tsify)
 				.transform(babelify, {
 					presets: ['env'],
@@ -37,7 +37,7 @@ gulp.task('ts', function (done) {
 					return opt;
 				}))
 				.pipe(buffer())
-				.pipe(sourcemaps.init({ largeFile: true }))
+				.pipe(sourcemaps.init({ largeFile: true, loadMaps: true }))
 					.pipe(uglify())
 					.on('error', error => { error.showStack = false; done(error); })
 				.pipe(sourcemaps.write('./'))

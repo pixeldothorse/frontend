@@ -1,3 +1,8 @@
 import { Test } from './test';
 
-Test.test();
+import * as pixi from 'pixi.js';
+
+document.onload = () => {
+	Test.test();
+	var test = new pixi.Application();
+}
