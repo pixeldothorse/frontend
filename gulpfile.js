@@ -66,7 +66,7 @@ gulp.task('build:ts', ['clean:js'], function (done) {
 				}))
 				.pipe(buffer())
 				.pipe(sourcemaps.init({ largeFile: true, loadMaps: true }))
-					//.pipe(uglify())
+					.pipe(uglify())
 				.pipe(sourcemaps.write('./'))
 				.pipe(gulp.dest('./dist/js/'))
 				.on('finish', function() {
