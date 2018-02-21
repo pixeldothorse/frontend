@@ -17,8 +17,26 @@ const babelify = require('babelify');
 const autoprefixer = require('gulp-autoprefixer');
 const watch = require('gulp-watch');
 const sorcery = require('sorcery');
+const clean = require('gulp-clean');
 
-gulp.task('build:ts', function (done) {
+gulp.task('clean:js', function () {
+	return gulp.src('./dist/js', { read: false })
+		.pipe(clean());
+});
+
+gulp.task('clean:css', function () {
+	return gulp.src('./dist/css', { read: false })
+		.pipe(clean());
+});
+
+gulp.task('clean:html', function () {
+	return gulp.src(['./dist/*.html', './dist/**/*.html'], { read: false })
+		.pipe(clean());
+});
+
+gulp.task('clean', ['clean:js', 'clean:css', 'clean:html']);
+
+gulp.task('build:ts', ['clean:js'], function (done) {
 	let errors = [];
 	let sourceMapsBuilt = false;
 
@@ -85,7 +103,7 @@ gulp.task('build:ts', function (done) {
 	});
 });
 
-gulp.task('build:sass', function (done) {
+gulp.task('build:sass', ['clean:css'], function (done) {
 	gulp.src(['./src/scss/*.scss', './src/scss/**/*.scss'])
 		.pipe(sourcemaps.init())
 			.pipe(sass({ outputStyle: 'compressed' }).on('error', error => {
@@ -101,7 +119,7 @@ gulp.task('build:sass', function (done) {
 		.on('end', done);
 });
 
-gulp.task('build:html', function () {
+gulp.task('build:html', ['clean:html'], function () {
 	return gulp.src(['src/*.html', 'src/**/*.html'])
 		.pipe(htmlmin({ collapseWhitespace: true }))
 		.pipe(gulp.dest('./dist/'));
@@ -127,6 +145,6 @@ gulp.task('watch:html', function() {
 	})
 });
 
-gulp.task('watch', ['watch:ts', 'watch:sass', 'watch:html']);
+gulp.task('watch', ['build', 'watch:ts', 'watch:sass', 'watch:html']);
 
 gulp.task('default', ['watch']);
