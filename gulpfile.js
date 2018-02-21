@@ -15,8 +15,9 @@ const es = require('event-stream');
 const rename = require('gulp-rename');
 const babelify = require('babelify');
 const autoprefixer = require('gulp-autoprefixer');
+const watch = require('gulp-watch');
 
-gulp.task('ts', function (done) {
+gulp.task('build:ts', function (done) {
 	glob('./src/ts/main-**.ts', function (err, files) {
 		if (err) done(err);
 
@@ -48,7 +49,7 @@ gulp.task('ts', function (done) {
 	});
 });
 
-gulp.task('sass', function (done) {
+gulp.task('build:sass', function (done) {
 	gulp.src(['./src/scss/*.scss', './src/scss/**/*.scss'])
 		.pipe(sourcemaps.init())
 			.pipe(sass({ outputStyle: 'compressed' }).on('error', error => {
@@ -64,10 +65,32 @@ gulp.task('sass', function (done) {
 		.on('end', done);
 });
 
-gulp.task('html', function () {
+gulp.task('build:html', function () {
 	return gulp.src(['src/*.html', 'src/**/*.html'])
 		.pipe(htmlmin({ collapseWhitespace: true }))
 		.pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('default', ['ts', 'sass', 'html']);
+gulp.task('build', ['build:ts', 'build:sass', 'build:html']);
+
+gulp.task('watch:ts', function() {
+	watch(['./src/ts/*.ts', './src/ts/**/*.ts'], function() {
+		gulp.start('build:ts');
+	})
+});
+
+gulp.task('watch:sass', function() {
+	watch(['./src/scss/*.scss', './src/scss/**/*.scss'], function() {
+		gulp.start('build:sass');
+	})
+});
+
+gulp.task('watch:html', function() {
+	watch(['src/*.html', 'src/**/*.html'], function() {
+		gulp.start('build:html');
+	})
+});
+
+gulp.task('watch', ['watch:ts', 'watch:sass', 'watch:html']);
+
+gulp.task('default', ['build']);
