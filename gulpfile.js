@@ -61,30 +61,31 @@ gulp.task('build:ts', ['clean:js'], function (done) {
 				.pipe(rename(function (opt) {
 					opt.dirname = '';
 					opt.extname = '.min.js';
-					opt.basename = opt.basename.replace(/^main\-/, '')
+					opt.basename = opt.basename.replace(/^main-/, '');
 					return opt;
 				}))
 				.pipe(buffer())
 				.pipe(sourcemaps.init({ largeFile: true, loadMaps: true }))
-					.pipe(uglify())
+				.pipe(uglify())
 				.pipe(sourcemaps.write('./'))
 				.pipe(gulp.dest('./dist/js/'))
-				.on('finish', function() {
+				.on('finish', function () {
 					if (sourceMapsBuilt) return;
 
 					sourceMapsBuilt = true;
 
-					glob('./dist/js/**.min.js', function(err, files) {
+					glob('./dist/js/**.min.js', function (err, files) {
 						if (err) {
 							errors.push(err.message);
 							return;
 						}
 
 						files.map(function (file) {
-							sorcery.load(file).then(function (chain) {
-								let map = chain.apply();
-								chain.write();
-							}).catch(() => {});
+							sorcery
+								.load(file).then(function (chain) {
+									chain.write();
+								})
+								.catch(() => {});
 						});
 					});
 				});
@@ -106,14 +107,14 @@ gulp.task('build:ts', ['clean:js'], function (done) {
 gulp.task('build:sass', ['clean:css'], function (done) {
 	gulp.src(['./src/scss/*.scss', './src/scss/**/*.scss'])
 		.pipe(sourcemaps.init())
-			.pipe(sass({ outputStyle: 'compressed' }).on('error', error => {
-				error.showStack = false;
-				error.toString = function() {
-					return this.message;
-				};
-				done(error);
-			}))
-			.pipe(autoprefixer())
+		.pipe(sass({ outputStyle: 'compressed' }).on('error', error => {
+			error.showStack = false;
+			error.toString = function () {
+				return this.message;
+			};
+			done(error);
+		}))
+		.pipe(autoprefixer())
 		.pipe(sourcemaps.write('./'))
 		.pipe(gulp.dest('./dist/css/'))
 		.on('end', done);
@@ -127,20 +128,20 @@ gulp.task('build:html', ['clean:html'], function () {
 
 gulp.task('build', ['build:ts', 'build:sass', 'build:html']);
 
-gulp.task('watch:ts', function() {
-	watch(['./src/ts/*.ts', './src/ts/**/*.ts'], function() {
+gulp.task('watch:ts', function () {
+	watch(['./src/ts/*.ts', './src/ts/**/*.ts'], function () {
 		gulp.start('build:ts');
 	});
 });
 
-gulp.task('watch:sass', function() {
-	watch(['./src/scss/*.scss', './src/scss/**/*.scss'], function() {
+gulp.task('watch:sass', function () {
+	watch(['./src/scss/*.scss', './src/scss/**/*.scss'], function () {
 		gulp.start('build:sass');
 	});
 });
 
-gulp.task('watch:html', function() {
-	watch(['src/*.html', 'src/**/*.html'], function() {
+gulp.task('watch:html', function () {
+	watch(['src/*.html', 'src/**/*.html'], function () {
 		gulp.start('build:html');
 	});
 });
