@@ -50,7 +50,7 @@ gulp.task('build:ts', ['clean:js'], function (done) {
 			return browserify({ entries: [entry], debug: true })
 				.plugin(tsify)
 				.transform(babelify, {
-					presets: ['env'],
+					presets: ['modern-browsers'],
 					extensions: ['.tsx', '.ts']
 				})
 				.bundle()

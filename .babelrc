@@ -1,10 +1,5 @@
 {
 	"presets": [
-		["env", {
-			"targets": {
-				"chrome": "60",
-				"firefox": "53"
-			}
-		}]
+		["modern-browsers"]
 	]
 }
