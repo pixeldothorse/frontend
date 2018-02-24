@@ -19,34 +19,34 @@ const watch = require('gulp-watch');
 const sorcery = require('sorcery');
 const clean = require('gulp-clean');
 
-gulp.task('clean:js', function () {
+gulp.task('clean:js', () => {
 	return gulp.src('./dist/js', { read: false })
 		.pipe(clean());
 });
 
-gulp.task('clean:css', function () {
+gulp.task('clean:css', () => {
 	return gulp.src('./dist/css', { read: false })
 		.pipe(clean());
 });
 
-gulp.task('clean:html', function () {
+gulp.task('clean:html', () => {
 	return gulp.src(['./dist/*.html', './dist/**/*.html'], { read: false })
 		.pipe(clean());
 });
 
 gulp.task('clean', ['clean:js', 'clean:css', 'clean:html']);
 
-gulp.task('build:ts', ['clean:js'], function (done) {
+gulp.task('build:ts', ['clean:js'], done => {
 	let errors = [];
 	let sourceMapsBuilt = false;
 
-	glob('./src/ts/main-**.ts', function (err, files) {
+	glob('./src/ts/main-**.ts', (err, files) => {
 		if (err) {
 			done(err);
 			return;
 		}
 
-		let tasks = files.map(function (entry) {
+		let tasks = files.map(entry => {
 			return browserify({ entries: [entry], debug: true })
 				.plugin(tsify)
 				.transform(babelify, {
@@ -58,7 +58,7 @@ gulp.task('build:ts', ['clean:js'], function (done) {
 					if (!errors.includes(error.message)) errors.push(error.message);
 				})
 				.pipe(source(entry))
-				.pipe(rename(function (opt) {
+				.pipe(rename(opt => {
 					opt.dirname = '';
 					opt.extname = '.min.js';
 					opt.basename = opt.basename.replace(/^main-/, '');
@@ -69,23 +69,21 @@ gulp.task('build:ts', ['clean:js'], function (done) {
 				.pipe(uglify())
 				.pipe(sourcemaps.write('./'))
 				.pipe(gulp.dest('./dist/js/'))
-				.on('finish', function () {
+				.on('finish', () => {
 					if (sourceMapsBuilt) return;
 
 					sourceMapsBuilt = true;
 
-					glob('./dist/js/**.min.js', function (err, files) {
+					glob('./dist/js/**.min.js', (err, files) => {
 						if (err) {
 							errors.push(err.message);
 							return;
 						}
 
-						files.map(function (file) {
-							sorcery
-								.load(file).then(function (chain) {
-									chain.write();
-								})
-								.catch(() => {});
+						files.map(file => {
+							sorcery.load(file).then(chain => {
+								chain.write();
+							}).catch(() => {});
 						});
 					});
 				});
@@ -104,12 +102,12 @@ gulp.task('build:ts', ['clean:js'], function (done) {
 	});
 });
 
-gulp.task('build:sass', ['clean:css'], function (done) {
+gulp.task('build:sass', ['clean:css'], done => {
 	gulp.src(['./src/scss/*.scss', './src/scss/**/*.scss'])
 		.pipe(sourcemaps.init())
 		.pipe(sass({ outputStyle: 'compressed' }).on('error', error => {
 			error.showStack = false;
-			error.toString = function () {
+			error.toString = () => {
 				return this.message;
 			};
 			done(error);
@@ -120,7 +118,7 @@ gulp.task('build:sass', ['clean:css'], function (done) {
 		.on('end', done);
 });
 
-gulp.task('build:html', ['clean:html'], function () {
+gulp.task('build:html', ['clean:html'], () => {
 	return gulp.src(['src/*.html', 'src/**/*.html'])
 		.pipe(htmlmin({ collapseWhitespace: true }))
 		.pipe(gulp.dest('./dist/'));
@@ -128,20 +126,20 @@ gulp.task('build:html', ['clean:html'], function () {
 
 gulp.task('build', ['build:ts', 'build:sass', 'build:html']);
 
-gulp.task('watch:ts', function () {
-	watch(['./src/ts/*.ts', './src/ts/**/*.ts'], function () {
+gulp.task('watch:ts', () => {
+	watch(['./src/ts/*.ts', './src/ts/**/*.ts'], () => {
 		gulp.start('build:ts');
 	});
 });
 
-gulp.task('watch:sass', function () {
-	watch(['./src/scss/*.scss', './src/scss/**/*.scss'], function () {
+gulp.task('watch:sass', () => {
+	watch(['./src/scss/*.scss', './src/scss/**/*.scss'], () => {
 		gulp.start('build:sass');
 	});
 });
 
-gulp.task('watch:html', function () {
-	watch(['src/*.html', 'src/**/*.html'], function () {
+gulp.task('watch:html', () => {
+	watch(['src/*.html', 'src/**/*.html'], () => {
 		gulp.start('build:html');
 	});
 });

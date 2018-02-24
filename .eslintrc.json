@@ -7,7 +7,6 @@
 		"indent": ["error", "tab", {
 			"MemberExpression": 1
 		}],
-		"newline-per-chained-call": ["error"],
 		"no-tabs": "off",
 		"semi": ["error", "always"],
 		"space-before-function-paren": ["error", {

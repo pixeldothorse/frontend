@@ -8,7 +8,6 @@
 			"named": "never",
 			"asyncArrow": "always"
 		}],
-		"newline-per-chained-call": ["error"],
 		"no-unused-variable": [true]
 	}
 }
