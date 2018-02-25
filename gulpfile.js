@@ -18,6 +18,11 @@ const autoprefixer = require('gulp-autoprefixer');
 const watch = require('gulp-watch');
 const sorcery = require('sorcery');
 const clean = require('gulp-clean');
+const rev = require('gulp-rev');
+const revReplace = require('gulp-rev-replace');
+const merge = require('gulp-merge-json');
+const chalk = require('chalk');
+const del = require('del');
 
 gulp.task('clean:js', () => {
 	return gulp.src('./dist/js', { read: false })
@@ -34,7 +39,12 @@ gulp.task('clean:html', () => {
 		.pipe(clean());
 });
 
-gulp.task('clean', ['clean:js', 'clean:css', 'clean:html']);
+gulp.task('clean:rev-manifest', () => {
+	return gulp.src('./dist/rev-manifest*.json', { read: false })
+		.pipe(clean());
+});
+
+gulp.task('clean', ['clean:rev-manifest', 'clean:js', 'clean:css', 'clean:html']);
 
 gulp.task('build:ts', ['clean:js'], done => {
 	let errors = [];
@@ -67,8 +77,11 @@ gulp.task('build:ts', ['clean:js'], done => {
 				.pipe(buffer())
 				.pipe(sourcemaps.init({ largeFile: true, loadMaps: true }))
 				.pipe(uglify())
+				.pipe(rev())
 				.pipe(sourcemaps.write('./'))
 				.pipe(gulp.dest('./dist/js/'))
+				.pipe(rev.manifest('rev-manifest-js.json', { merge: true }))
+				.pipe(gulp.dest('./dist'))
 				.on('finish', () => {
 					if (sourceMapsBuilt) return;
 
@@ -113,37 +126,40 @@ gulp.task('build:sass', ['clean:css'], done => {
 			done(error);
 		}))
 		.pipe(autoprefixer())
+		.pipe(rename({ suffix: '.min' }))
+		.pipe(rev())
 		.pipe(sourcemaps.write('./'))
 		.pipe(gulp.dest('./dist/css/'))
+		.pipe(rev.manifest('rev-manifest-css.json'))
+		.pipe(gulp.dest('./dist'))
 		.on('end', done);
 });
 
-gulp.task('build:html', ['clean:html'], () => {
+gulp.task('build:merge-rev-manifest', ['clean:rev-manifest', 'build:ts', 'build:sass'], () => {
+	return gulp.src(['./dist/rev-manifest-css.json', './dist/rev-manifest-js.json'])
+		.pipe(merge({ fileName: 'rev-manifest.json' }))
+		.pipe(gulp.dest('./dist'));
+});
+
+gulp.task('build', ['clean:html', 'build:merge-rev-manifest'], () => {
+	del('./dist/rev-manifest-*.json');
+
+	let manifest = gulp.src('./dist/rev-manifest.json');
+
 	return gulp.src(['src/*.html', 'src/**/*.html'])
+		.pipe(revReplace({ manifest: manifest }))
 		.pipe(htmlmin({ collapseWhitespace: true }))
-		.pipe(gulp.dest('./dist/'));
+		.pipe(gulp.dest('./dist/'))
+		.on('end', () => {
+			log.info(chalk.bold.green('Build completed!'));
+		});
 });
 
-gulp.task('build', ['build:ts', 'build:sass', 'build:html']);
-
-gulp.task('watch:ts', () => {
-	watch(['./src/ts/*.ts', './src/ts/**/*.ts'], () => {
-		gulp.start('build:ts');
+gulp.task('watch', ['build'], () => {
+	watch(['src/*.html', 'src/**/*.html', './src/scss/*.scss', './src/scss/**/*.scss', './src/ts/*.ts', './src/ts/**/*.ts'], () => {
+		log.warn(chalk.bold.yellow('Starting build. Please wait...'));
+		gulp.start('build');
 	});
 });
-
-gulp.task('watch:sass', () => {
-	watch(['./src/scss/*.scss', './src/scss/**/*.scss'], () => {
-		gulp.start('build:sass');
-	});
-});
-
-gulp.task('watch:html', () => {
-	watch(['src/*.html', 'src/**/*.html'], () => {
-		gulp.start('build:html');
-	});
-});
-
-gulp.task('watch', ['build', 'watch:ts', 'watch:sass', 'watch:html']);
 
 gulp.task('default', ['watch']);
