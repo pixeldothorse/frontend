@@ -49,6 +49,7 @@ gulp.task('clean', ['clean:rev-manifest', 'clean:js', 'clean:css', 'clean:html']
 gulp.task('build:ts', ['clean:js'], done => {
 	let errors = [];
 	let sourceMapsBuilt = false;
+	let manifestCounter = 0;
 
 	glob('./src/ts/main-**.ts', (err, files) => {
 		if (err) {
@@ -57,6 +58,8 @@ gulp.task('build:ts', ['clean:js'], done => {
 		}
 
 		let tasks = files.map(entry => {
+			manifestCounter++;
+
 			return browserify({ entries: [entry], debug: true })
 				.plugin(tsify)
 				.transform(babelify, {
@@ -80,7 +83,7 @@ gulp.task('build:ts', ['clean:js'], done => {
 				.pipe(rev())
 				.pipe(sourcemaps.write('./'))
 				.pipe(gulp.dest('./dist/js/'))
-				.pipe(rev.manifest('rev-manifest-js.json', { merge: true }))
+				.pipe(rev.manifest(`rev-manifest-js-${manifestCounter}.json`))
 				.pipe(gulp.dest('./dist'))
 				.on('finish', () => {
 					if (sourceMapsBuilt) return;
@@ -136,7 +139,7 @@ gulp.task('build:sass', ['clean:css'], done => {
 });
 
 gulp.task('build:merge-rev-manifest', ['clean:rev-manifest', 'build:ts', 'build:sass'], () => {
-	return gulp.src(['./dist/rev-manifest-css.json', './dist/rev-manifest-js.json'])
+	return gulp.src(['./dist/rev-manifest-css.json', './dist/rev-manifest-js-*.json'])
 		.pipe(merge({ fileName: 'rev-manifest.json' }))
 		.pipe(gulp.dest('./dist'));
 });
