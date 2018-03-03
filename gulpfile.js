@@ -4,7 +4,7 @@ const browserify = require('browserify');
 const gulp = require('gulp');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
-const uglify = require('gulp-uglify');
+const uglify = require('gulp-uglify-es').default;
 const sourcemaps = require('gulp-sourcemaps');
 const log = require('fancy-log');
 const tsify = require('tsify');
@@ -80,6 +80,10 @@ gulp.task('build:ts', ['clean:js'], done => {
 				.pipe(buffer())
 				.pipe(sourcemaps.init({ largeFile: true, loadMaps: true }))
 				.pipe(uglify())
+				.on('error', error => {
+					log.error(error.message);
+					done(new Error());
+				})
 				.pipe(rev())
 				.pipe(sourcemaps.write('./'))
 				.pipe(gulp.dest('./dist/js/'))
