@@ -1,3 +1,5 @@
+import * as Pixi from 'pixi.js';
+
 interface CharacterOptions {
 	sprite: Pixi.Sprite;
 	sprintMultiplier: number;
