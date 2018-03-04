@@ -52,10 +52,21 @@ gulp.task('clean:images', () => {
 
 gulp.task('clean', ['clean:rev-manifest', 'clean:js', 'clean:css', 'clean:html', 'clean:images']);
 
-gulp.task('build:ts', ['clean:js'], done => {
+gulp.task('build:images', ['clean:images'], () => {
+	return gulp.src(['./src/img/*', './src/img/**/*'])
+		.pipe(imagemin())
+		.pipe(rev())
+		.pipe(gulp.dest('./dist/img'))
+		.pipe(rev.manifest('rev-manifest-img.json'))
+		.pipe(gulp.dest('./dist'));
+});
+
+gulp.task('build:ts', ['clean:js', 'build:images'], done => {
 	let errors = [];
 	let sourceMapsBuilt = false;
 	let manifestCounter = 0;
+
+	let imgManifest = gulp.src('./dist/rev-manifest-img.json');
 
 	glob('./src/ts/main-**.ts', (err, files) => {
 		if (err) {
@@ -85,6 +96,7 @@ gulp.task('build:ts', ['clean:js'], done => {
 				}))
 				.pipe(buffer())
 				.pipe(sourcemaps.init({ largeFile: true, loadMaps: true }))
+				.pipe(revReplace({ manifest: imgManifest }))
 				.pipe(uglify())
 				.on('error', error => {
 					log.error(error.message);
@@ -148,14 +160,8 @@ gulp.task('build:sass', ['clean:css'], done => {
 		.on('end', done);
 });
 
-gulp.task('build:images', ['clean:images'], () => {
-	return gulp.src(['./src/img/*', './src/img/**/*'])
-		.pipe(imagemin())
-		.pipe(gulp.dest('./dist/img'));
-});
-
-gulp.task('build:merge-rev-manifest', ['clean:rev-manifest', 'build:ts', 'build:sass', 'build:images'], () => {
-	return gulp.src(['./dist/rev-manifest-css.json', './dist/rev-manifest-js-*.json'])
+gulp.task('build:merge-rev-manifest', ['clean:rev-manifest', 'build:ts', 'build:sass'], () => {
+	return gulp.src(['./dist/rev-manifest-css.json', './dist/rev-manifest-js-*.json', './dist/rev-manifest-img.json'])
 		.pipe(merge({ fileName: 'rev-manifest.json' }))
 		.pipe(gulp.dest('./dist'));
 });
