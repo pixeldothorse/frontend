@@ -1,30 +1,47 @@
+interface VectorComponents {
+	x?: number;
+	y?: number;
+	length?: number;
+	angle?: number;
+}
+
 export class Vector {
 	public x: number;
 	public y: number;
 
 	/**
-	 * Creates a new Vector object with the given x and y values
-	 *
-	 * @param x The x component of the vector
-	 * @param y The y component of the new vector
+	 * Creates an instance of Vector.
+	 * @param {VectorComponents} components The components of the vector
+	 * @memberof Vector
 	 */
-	constructor(x: number, y: number) {
-		this.x = x;
-		this.y = y;
+	constructor(components: VectorComponents) {
+		if (components.x || components.y) {
+			this.x = components.x || 0;
+			this.y = components.y || 0;
+		} else if (components.length || components.angle) {
+			let length = components.length || 0;
+			let angle = components.angle || 0;
+			this.x = length * Math.cos(angle);
+			this.y = length * Math.sin(angle);
+		}
 	}
 
 	/**
 	 * Create a new unit vector in the given direction (radians)
 	 *
+	 * The direction is the angle in polar coordinates
+	 *
 	 * @param direction The direction of the desired unit vector in radians
 	 * @returns {Vector} The created unit vector
 	 */
 	static unitVectorFromDirection(direction: number): Vector {
-		return new Vector(Math.cos(direction), Math.sin(direction));
+		return new Vector({ x: Math.cos(direction), y: Math.sin(direction) });
 	}
 
 	/**
 	 * Gets the magnitude of the current vector
+	 *
+	 * The magnitude is the length in polar coordinates
 	 *
 	 * @returns {number} The vector's magnitude
 	 * @memberof Vector
@@ -34,7 +51,9 @@ export class Vector {
 	}
 
 	/**
-	 * Sets the magnitude of the current vector, preservig its direction
+	 * Sets the magnitude of the current vector, preserving its direction
+	 *
+	 * The magnitude is the length in polar coordinates
 	 *
 	 * @param {number} magnitude The new magnitude to set
 	 * @memberof Vector
@@ -64,7 +83,7 @@ export class Vector {
 	 * @memberof Vector
 	 */
 	add(v2: Vector): Vector {
-		return new Vector(this.x + v2.x, this.y + v2.y);
+		return new Vector({ x: this.x + v2.x, y: this.y + v2.y });
 	}
 
 	/**
@@ -87,7 +106,7 @@ export class Vector {
 	 * @memberof Vector
 	 */
 	subtract(v2: Vector): Vector {
-		return new Vector(this.x - v2.x, this.y - v2.y);
+		return new Vector({ x: this.x - v2.x, y: this.y - v2.y });
 	}
 
 	/**
@@ -110,7 +129,7 @@ export class Vector {
 	 * @memberof Vector
 	 */
 	multiply(scalar: number): Vector {
-		return new Vector(this.x * scalar, this.y * scalar);
+		return new Vector({ x: this.x * scalar, y: this.y * scalar });
 	}
 
 	/**
@@ -133,7 +152,7 @@ export class Vector {
 	 * @memberof Vector
 	 */
 	divide(scalar: number): Vector {
-		return new Vector(this.x / scalar, this.y / scalar);
+		return new Vector({ x: this.x / scalar, y: this.y / scalar });
 	}
 
 	/**
@@ -160,7 +179,22 @@ export class Vector {
 	}
 
 	/**
+	 * Finds the cross product of this vector and another vector
+	 *
+	 * While the cross product in 2D is not well-defined, it can be calculated in terms of an imaginary z-axis
+	 *
+	 * @param {Vector} v2 The vector to find the cross product with
+	 * @returns {number} The cross product of the two vectors
+	 * @memberof Vector
+	 */
+	crossProduct(v2: Vector): number {
+        return (this.x * v2.y) - (this.y * v2.x);
+    }
+
+	/**
 	 * Gets the direction of the current vector in radians
+	 *
+	 * The direction is the angle in polar coordinates
 	 *
 	 * @returns {number} The direction (or angle) of the vector
 	 * @memberof Vector
@@ -171,6 +205,8 @@ export class Vector {
 
 	/**
 	 * Sets the direction of the current vector, preserving its magnitude
+	 *
+	 * The direction is the angle in polar coordinates
 	 *
 	 * @param {number} direction The new direction (in radians) to assign to the vector
 	 * @memberof Vector
@@ -188,36 +224,44 @@ export class Vector {
 	 * @memberof Vector
 	 */
 	copy(): Vector {
-		return new Vector(this.x, this.y);
+		return new Vector({ x: this.x, y: this.y });
 	}
 
 	/**
-	 * Returns a string representation of the vector in the form "Vector <x, y>"
+	 * Returns a string representation of the vector
 	 *
-	 * @returns {string} A string representing the vector
+	 * This can be either in the form "Vector <x, y>" or "Vector (p) <length, angle>" depending on the state
+	 * of the polar parameter.
+	 *
+	 * @param {boolean} [polar] Whether or not the representation should be expressed in terms of polar coordinates
+	 * @returns {string}
 	 * @memberof Vector
 	 */
-	toString(): string {
-		return `Vector <${this.x}, ${this.y}>`;
+	toString(polar?: boolean): string {
+		if (polar) {
+			return `Vector (p) <${this.getMagnitude()}, ${this.getDirection()}>`;
+		} else {
+			return `Vector <${this.x}, ${this.y}>`;
+		}
 	}
 
 	/**
-	 * Returns an array representation of the vector in the form [x, y]
+	 * Returns an array representation of the vector in the form [x, y, angle, length]
 	 *
 	 * @returns {number[]} An array representing the vector
 	 * @memberof Vector
 	 */
 	toArray(): number[] {
-		return [this.x, this.y];
+		return [this.x, this.y, this.getDirection(), this.getMagnitude()];
 	}
 
 	/**
-	 * Returns an object representation of the vector in the form { x: x, y: y }
+	 * Returns an object representation of the vector in the form { x: x, y: y, angle: angle, length: length }
 	 *
 	 * @returns {*} An object representing the vector
 	 * @memberof Vector
 	 */
 	toObject(): any {
-		return { x: this.x, y: this.y };
+		return { x: this.x, y: this.y, angle: this.getDirection(), length: this.getMagnitude() };
 	}
 }
