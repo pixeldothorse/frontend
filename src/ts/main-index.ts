@@ -24,10 +24,13 @@ let think: Character;
 let text = new Pixi.Text('Hello, world!');
 text.style = new Pixi.TextStyle({
 	fill: '#ffffff',
-	fontFamily: 'Arial',
-	fontSize: '40px',
-	wordWrap: true
+	fontFamily: 'monospace',
+	fontSize: '20px',
+	wordWrap: true,
+	wordWrapWidth: window.innerWidth / 4
 });
+text.x = 5;
+text.y = 5;
 
 app.stage.addChild(text);
 
@@ -104,7 +107,8 @@ class Character {
 }
 
 function setup() {
-	text.visible = false;
+	// text.visible = false;
+	text.text = 'CONTROLS:\nWASD  - move\nShift - faster';
 	let thinkSprite = new Pixi.Sprite(
 		loader.resources.think.texture
 	);
@@ -113,6 +117,8 @@ function setup() {
 		sprintMultiplier: 4,
 		baseMovementVelocity: 2
 	});
+	think.sprite.x = (window.innerWidth - think.sprite.width) / 2;
+	think.sprite.y = (window.innerHeight - think.sprite.height) / 2;
 	app.stage.addChild(think.sprite);
 	app.ticker.add(dt => update(dt));
 
