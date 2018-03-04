@@ -133,7 +133,7 @@ gulp.task('build:sass', ['clean:css'], done => {
 		.pipe(sourcemaps.init())
 		.pipe(sass({ outputStyle: 'compressed' }).on('error', error => {
 			error.showStack = false;
-			error.toString = () => {
+			error.toString = function () {
 				return this.message;
 			};
 			done(error);
