@@ -198,7 +198,7 @@ function update(dt: number) {
 		think.sprite.y = app.renderer.height;
 	}
 
-	debugText.text = `x = ${think.sprite.x.toFixed(4)}, y = ${think.sprite.y.toFixed(4)}\ndir = 0b${think.direction.toString(2).padStart(4, '0')}`;
+	debugText.text = `x = ${think.sprite.x.toFixed(4)}, y = ${think.sprite.y.toFixed(4)}\ndir = 0b${think.direction.toString(2).padStart(4, '0')}\nFPS = ${Math.round(app.ticker.FPS)}`;
 	debugText.y = app.renderer.height - 5 - debugText.height;
 }
 
