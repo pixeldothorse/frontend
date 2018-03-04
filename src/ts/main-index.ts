@@ -1,4 +1,5 @@
 import * as Pixi from 'pixi.js';
+import { Character } from './util/Character';
 
 let resolution = 1;
 
@@ -90,33 +91,6 @@ const DIR_UP    = 0b1000;
 const DIR_DOWN  = 0b0100;
 const DIR_LEFT  = 0b0010;
 const DIR_RIGHT = 0b0001;
-
-interface CharacterOptions {
-	sprite: Pixi.Sprite;
-	sprintMultiplier: number;
-	baseMovementVelocity: number;
-}
-
-class Character {
-	public sprite: Pixi.Sprite;
-	public vx: number;
-	public vy: number;
-	public direction: number;
-	public sprint: number;
-	public sprintMultiplier: number;
-	public baseMovementVelocity: number;
-
-	constructor(options: CharacterOptions) {
-		this.sprite = options.sprite;
-		this.sprintMultiplier = options.sprintMultiplier;
-		this.baseMovementVelocity = options.baseMovementVelocity;
-
-		this.vx = 0;
-		this.vy = 0;
-		this.direction = 0b0000;
-		this.sprint = 1;
-	}
-}
 
 function setup() {
 	// text.visible = false;
