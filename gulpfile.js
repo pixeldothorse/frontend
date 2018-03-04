@@ -23,6 +23,7 @@ const revReplace = require('gulp-rev-replace');
 const merge = require('gulp-merge-json');
 const chalk = require('chalk');
 const del = require('del');
+const imagemin = require('gulp-imagemin');
 
 gulp.task('clean:js', () => {
 	return gulp.src('./dist/js', { read: false })
@@ -44,7 +45,12 @@ gulp.task('clean:rev-manifest', () => {
 		.pipe(clean());
 });
 
-gulp.task('clean', ['clean:rev-manifest', 'clean:js', 'clean:css', 'clean:html']);
+gulp.task('clean:images', () => {
+	return gulp.src('./dist/img', { read: false })
+		.pipe(clean());
+});
+
+gulp.task('clean', ['clean:rev-manifest', 'clean:js', 'clean:css', 'clean:html', 'clean:images']);
 
 gulp.task('build:ts', ['clean:js'], done => {
 	let errors = [];
@@ -142,7 +148,13 @@ gulp.task('build:sass', ['clean:css'], done => {
 		.on('end', done);
 });
 
-gulp.task('build:merge-rev-manifest', ['clean:rev-manifest', 'build:ts', 'build:sass'], () => {
+gulp.task('build:images', ['clean:images'], () => {
+	return gulp.src(['./src/img/*', './src/img/**/*'])
+		.pipe(imagemin())
+		.pipe(gulp.dest('./dist/img'));
+});
+
+gulp.task('build:merge-rev-manifest', ['clean:rev-manifest', 'build:ts', 'build:sass', 'build:images'], () => {
 	return gulp.src(['./dist/rev-manifest-css.json', './dist/rev-manifest-js-*.json'])
 		.pipe(merge({ fileName: 'rev-manifest.json' }))
 		.pipe(gulp.dest('./dist'));

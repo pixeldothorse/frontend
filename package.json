@@ -4,6 +4,7 @@
   "description": "The web frontend for the Pixel.Horse game",
   "main": "index.js",
   "dependencies": {
+    "gulp-imagemin": "^4.1.0",
     "pixi.js": "^4.7.0"
   },
   "devDependencies": {

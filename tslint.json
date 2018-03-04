@@ -8,6 +8,7 @@
 			"named": "never",
 			"asyncArrow": "always"
 		}],
-		"no-unused-variable": [true]
+		"no-unused-variable": [true],
+		"no-multi-spaces": false
 	}
 }
