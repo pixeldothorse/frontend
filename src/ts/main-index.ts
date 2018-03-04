@@ -168,3 +168,7 @@ function update(dt: number) {
 window.onload = () => {
 	document.body.appendChild(app.view);
 };
+
+window.onresize = () => {
+	app.renderer.resize(window.innerWidth, window.innerHeight);
+};
