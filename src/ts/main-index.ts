@@ -1,5 +1,6 @@
 import * as Pixi from 'pixi.js';
 import { Character } from './util/Character';
+import { Vector } from './util/Vector';
 
 let resolution = 1;
 
@@ -183,3 +184,6 @@ window.onload = () => {
 window.onresize = () => {
 	app.renderer.resize(window.innerWidth, window.innerHeight);
 };
+
+let test = new Vector(1, 2);
+(window as any).test = test;
