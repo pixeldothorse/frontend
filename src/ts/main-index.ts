@@ -19,7 +19,7 @@ loader.on('progress', (loader, res) => {
 loader.on('complete', setup);
 loader.load();
 
-let think: Pixi.Sprite;
+let think: Character;
 
 let text = new Pixi.Text('Hello, world!');
 text.style = new Pixi.TextStyle({
@@ -76,67 +76,93 @@ const DIR_DOWN  = 0b0100;
 const DIR_LEFT  = 0b0010;
 const DIR_RIGHT = 0b0001;
 
+interface CharacterOptions {
+	sprite: Pixi.Sprite;
+	sprintMultiplier: number;
+	baseMovementVelocity: number;
+}
+
+class Character {
+	public sprite: Pixi.Sprite;
+	public vx: number;
+	public vy: number;
+	public direction: number;
+	public sprint: number;
+	public sprintMultiplier: number;
+	public baseMovementVelocity: number;
+
+	constructor(options: CharacterOptions) {
+		this.sprite = options.sprite;
+		this.sprintMultiplier = options.sprintMultiplier;
+		this.baseMovementVelocity = options.baseMovementVelocity;
+
+		this.vx = 0;
+		this.vy = 0;
+		this.direction = 0b0000;
+		this.sprint = 1;
+	}
+}
+
 function setup() {
 	text.visible = false;
-	think = new Pixi.Sprite(
+	let thinkSprite = new Pixi.Sprite(
 		loader.resources.think.texture
 	);
-	app.stage.addChild(think);
+	think = new Character({
+		sprite: thinkSprite,
+		sprintMultiplier: 4,
+		baseMovementVelocity: 2
+	});
+	app.stage.addChild(think.sprite);
 	app.ticker.add(dt => update(dt));
 
-	(think as any).baseVelocity = 2;
-	(think as any).vx = 0;
-	(think as any).vy = 0;
-	(think as any).direction = 0b0000;
-	(think as any).sprint = 1;
-
 	let up = keyboard(87);
-	up.press = () => { (think as any).direction = (think as any).direction | DIR_UP; };
-	up.release = () => { (think as any).direction = (think as any).direction & ~DIR_UP; };
+	up.press = () => { think.direction = think.direction | DIR_UP; };
+	up.release = () => { think.direction = think.direction & ~DIR_UP; };
 
 	let down = keyboard(83);
-	down.press = () => { (think as any).direction = (think as any).direction | DIR_DOWN; };
-	down.release = () => { (think as any).direction = (think as any).direction & ~DIR_DOWN; };
+	down.press = () => { think.direction = think.direction | DIR_DOWN; };
+	down.release = () => { think.direction = think.direction & ~DIR_DOWN; };
 
 	let left = keyboard(65);
-	left.press = () => { (think as any).direction = (think as any).direction | DIR_LEFT; };
-	left.release = () => { (think as any).direction = (think as any).direction & ~DIR_LEFT; };
+	left.press = () => { think.direction = think.direction | DIR_LEFT; };
+	left.release = () => { think.direction = think.direction & ~DIR_LEFT; };
 
 	let right = keyboard(68);
-	right.press = () => { (think as any).direction = (think as any).direction | DIR_RIGHT; };
-	right.release = () => { (think as any).direction = (think as any).direction & ~DIR_RIGHT; };
+	right.press = () => { think.direction = think.direction | DIR_RIGHT; };
+	right.release = () => { think.direction = think.direction & ~DIR_RIGHT; };
 
 	let shift = keyboard(16);
 	shift.press = () => {
-		(think as any).sprint = 2;
-		(think as any).vx = (think as any).vx * (think as any).sprint;
-		(think as any).vy = (think as any).vy * (think as any).sprint;
+		think.sprint = think.sprintMultiplier;
+		think.vx = think.vx * think.sprint;
+		think.vy = think.vy * think.sprint;
 	};
 	shift.release = () => {
-		(think as any).vx = (think as any).vx / (think as any).sprint;
-		(think as any).vy = (think as any).vy / (think as any).sprint;
-		(think as any).sprint = 1;
+		think.vx = think.vx / think.sprint;
+		think.vy = think.vy / think.sprint;
+		think.sprint = 1;
 	};
 }
 
 function update(dt: number) {
-	if ((think as any).direction & DIR_UP) {
-		(think as any).vy = -2;
-	} else if ((think as any).direction & DIR_DOWN) {
-		(think as any).vy = 2;
+	if (think.direction & DIR_UP) {
+		think.vy = -think.baseMovementVelocity;
+	} else if (think.direction & DIR_DOWN) {
+		think.vy = think.baseMovementVelocity;
 	} else {
-		(think as any).vy = 0;
+		think.vy = 0;
 	}
-	if ((think as any).direction & DIR_LEFT) {
-		(think as any).vx = -2;
-	} else if ((think as any).direction & DIR_RIGHT) {
-		(think as any).vx = 2;
+	if (think.direction & DIR_LEFT) {
+		think.vx = -think.baseMovementVelocity;
+	} else if (think.direction & DIR_RIGHT) {
+		think.vx = think.baseMovementVelocity;
 	} else {
-		(think as any).vx = 0;
+		think.vx = 0;
 	}
 
-	think.x += (think as any).vx * (think as any).sprint * dt;
-	think.y += (think as any).vy * (think as any).sprint * dt;
+	think.sprite.x += think.vx * think.sprint * dt;
+	think.sprite.y += think.vy * think.sprint * dt;
 }
 
 window.onload = () => {
