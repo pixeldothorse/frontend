@@ -11,6 +11,10 @@ let app = new Pixi.Application(
 	}
 );
 
+app.renderer.autoResize = true;
+app.renderer.resize(window.innerWidth, window.innerHeight);
+app.renderer.resolution = resolution;
+
 let loader = app.loader;
 loader.add('think', 'img/thinkbyte-small.png');
 loader.on('progress', (loader, res) => {
@@ -27,18 +31,26 @@ text.style = new Pixi.TextStyle({
 	fontFamily: 'monospace',
 	fontSize: '20px',
 	wordWrap: true,
-	wordWrapWidth: window.innerWidth / 4
+	wordWrapWidth: app.renderer.width / 4
 });
 text.x = 5;
 text.y = 5;
+
+let debugText = new Pixi.Text('DEBUG INFO');
+debugText.style = new Pixi.TextStyle({
+	fill: '#ffffff',
+	fontFamily: 'monospace',
+	fontSize: '15px',
+	wordWrap: true,
+	wordWrapWidth: app.renderer.width - 5
+});
+debugText.x = 5;
+debugText.y = app.renderer.height - 5 - debugText.height;
 
 app.stage.addChild(text);
 
 app.renderer.view.style.position = 'absolute';
 app.renderer.view.style.display = 'block';
-app.renderer.autoResize = true;
-app.renderer.resize(window.innerWidth, window.innerHeight);
-app.renderer.resolution = resolution;
 
 function keyboard(keyCode: number) {
 	let key: any = {};
@@ -109,6 +121,7 @@ class Character {
 function setup() {
 	// text.visible = false;
 	text.text = 'CONTROLS:\nWASD  - move\nShift - faster';
+	app.stage.addChild(debugText);
 	let thinkSprite = new Pixi.Sprite(
 		loader.resources.think.texture
 	);
@@ -167,8 +180,26 @@ function update(dt: number) {
 		think.vx = 0;
 	}
 
-	think.sprite.x += think.vx * think.sprint * dt;
-	think.sprite.y += think.vy * think.sprint * dt;
+	let dx = think.vx * think.sprint * dt;
+	let dy = think.vy * think.sprint * dt;
+
+	think.sprite.x += dx;
+	think.sprite.y += dy;
+
+	// snap positions to renderer viewport (allow sliding just out of view)
+	if (think.sprite.x + think.sprite.width < 0) {
+		think.sprite.x = -think.sprite.width;
+	} else if (think.sprite.x > app.renderer.width) {
+		think.sprite.x = app.renderer.width;
+	}
+	if (think.sprite.y + think.sprite.height < 0) {
+		think.sprite.y = -think.sprite.height;
+	} else if (think.sprite.y > app.renderer.height) {
+		think.sprite.y = app.renderer.height;
+	}
+
+	debugText.text = `x = ${think.sprite.x.toFixed(4)}, y = ${think.sprite.y.toFixed(4)}\ndir = 0b${think.direction.toString(2).padStart(4, '0')}`;
+	debugText.y = app.renderer.height - 5 - debugText.height;
 }
 
 window.onload = () => {
