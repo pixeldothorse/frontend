@@ -1,0 +1,8 @@
+language: node_js
+node_js:
+  - '9.7.1'
+script:
+  - yarn lint
+  - yarn build
+  - yarn test
+cache: yarn

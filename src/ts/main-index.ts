@@ -17,16 +17,6 @@ app.renderer.autoResize = true;
 app.renderer.resize(window.innerWidth, window.innerHeight);
 app.renderer.resolution = resolution;
 
-let loader = app.loader;
-loader.add('think', 'img/thinkbyte-small.png');
-loader.on('progress', (loader, res) => {
-	text.text = `Loading: ${loader.progress}%...`;
-});
-loader.on('complete', setup);
-loader.load();
-
-let think: Character;
-
 let text = new Pixi.Text('Hello, world!');
 text.style = new Pixi.TextStyle({
 	fill: '#ffffff',
@@ -37,6 +27,16 @@ text.style = new Pixi.TextStyle({
 });
 text.x = 5;
 text.y = 5;
+
+let loader = app.loader;
+loader.add('think', 'img/thinkbyte-small.png');
+loader.on('progress', (loader, res) => {
+	text.text = `Loading: ${loader.progress}%...`;
+});
+loader.on('complete', setup);
+loader.load();
+
+let think: Character;
 
 let debugText = new Pixi.Text('DEBUG INFO');
 debugText.style = new Pixi.TextStyle({
