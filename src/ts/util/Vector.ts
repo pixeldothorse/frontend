@@ -1,29 +1,20 @@
-interface VectorComponents {
-	x?: number;
-	y?: number;
-	length?: number;
-	angle?: number;
-}
-
 export class Vector {
 	public x: number;
 	public y: number;
 
 	/**
-	 * Creates an instance of Vector.
-	 * @param {VectorComponents} components The components of the vector
+	 * Creates a new Vector instance using cartesian coordinates
+	 *
+	 * For constructing vectors with polar coordinates, see Vector.fromPolar()
+	 *
+	 * @param {number} x The x component of the vector
+	 * @param {number} y The y component of the vector
+	 * @see Vector.fromPolar
 	 * @memberof Vector
 	 */
-	constructor(components: VectorComponents) {
-		if (components.x || components.y) {
-			this.x = components.x || 0;
-			this.y = components.y || 0;
-		} else if (components.length || components.angle) {
-			let length = components.length || 0;
-			let angle = components.angle || 0;
-			this.x = length * Math.cos(angle);
-			this.y = length * Math.sin(angle);
-		}
+	constructor(x: number, y: number) {
+		this.x = x;
+		this.y = y;
 	}
 
 	/**
@@ -31,11 +22,25 @@ export class Vector {
 	 *
 	 * The direction is the angle in polar coordinates
 	 *
+	 * @static
 	 * @param direction The direction of the desired unit vector in radians
 	 * @returns {Vector} The created unit vector
 	 */
 	static unitVectorFromDirection(direction: number): Vector {
-		return new Vector({ x: Math.cos(direction), y: Math.sin(direction) });
+		return new Vector(Math.cos(direction), Math.sin(direction));
+	}
+
+	/**
+	 * Constructs a new vector from polar coordinates
+	 *
+	 * @static
+	 * @param {number} length The length component of the polar coordinate
+	 * @param {number} angle The angle component of the polar coordinate
+	 * @returns {Vector} A cartesian vector constructed from the polar coordinates
+	 * @memberof Vector
+	 */
+	static fromPolar(length: number, angle: number): Vector {
+		return new Vector(length * Math.cos(angle), length * Math.sin(angle));
 	}
 
 	/**
@@ -83,7 +88,7 @@ export class Vector {
 	 * @memberof Vector
 	 */
 	add(v2: Vector): Vector {
-		return new Vector({ x: this.x + v2.x, y: this.y + v2.y });
+		return new Vector(this.x + v2.x, this.y + v2.y);
 	}
 
 	/**
@@ -106,7 +111,7 @@ export class Vector {
 	 * @memberof Vector
 	 */
 	subtract(v2: Vector): Vector {
-		return new Vector({ x: this.x - v2.x, y: this.y - v2.y });
+		return new Vector(this.x - v2.x, this.y - v2.y);
 	}
 
 	/**
@@ -129,7 +134,7 @@ export class Vector {
 	 * @memberof Vector
 	 */
 	multiply(scalar: number): Vector {
-		return new Vector({ x: this.x * scalar, y: this.y * scalar });
+		return new Vector(this.x * scalar, this.y * scalar);
 	}
 
 	/**
@@ -152,7 +157,7 @@ export class Vector {
 	 * @memberof Vector
 	 */
 	divide(scalar: number): Vector {
-		return new Vector({ x: this.x / scalar, y: this.y / scalar });
+		return new Vector(this.x / scalar, this.y / scalar);
 	}
 
 	/**
@@ -224,7 +229,7 @@ export class Vector {
 	 * @memberof Vector
 	 */
 	copy(): Vector {
-		return new Vector({ x: this.x, y: this.y });
+		return new Vector(this.x, this.y);
 	}
 
 	/**

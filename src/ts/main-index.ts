@@ -185,5 +185,5 @@ window.onresize = () => {
 	app.renderer.resize(window.innerWidth, window.innerHeight);
 };
 
-let test = new Vector({ x: 1, y: 2 });
+let test = new Vector(1, 2);
 (window as any).test = test;
