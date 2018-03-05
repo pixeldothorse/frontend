@@ -4,8 +4,13 @@
   "description": "The web frontend for the Pixel.Horse game",
   "main": "index.js",
   "dependencies": {
+    "@types/chai": "^4.1.2",
+    "@types/mocha": "^2.2.48",
+    "chai": "^4.1.2",
     "gulp-imagemin": "^4.1.0",
-    "pixi.js": "^4.7.0"
+    "mocha": "^5.0.1",
+    "pixi.js": "^4.7.0",
+    "ts-node": "^5.0.1"
   },
   "devDependencies": {
     "@types/node": "^9.4.6",
@@ -48,7 +53,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha -r ts-node/register src/**/*.spec.ts",
     "build": "gulp build",
     "lint": "eslint . && tslint --project ."
   },
