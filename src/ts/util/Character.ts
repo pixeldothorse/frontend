@@ -1,4 +1,5 @@
 import * as Pixi from 'pixi.js';
+import { Vector } from './Vector';
 
 interface CharacterOptions {
 	sprite: Pixi.Sprite;
@@ -10,7 +11,7 @@ export class Character {
 	public sprite: Pixi.Sprite;
 	public vx: number;
 	public vy: number;
-	public direction: number;
+	public direction: Vector;
 	public sprint: number;
 	public sprintMultiplier: number;
 	public baseMovementVelocity: number;
@@ -22,7 +23,7 @@ export class Character {
 
 		this.vx = 0;
 		this.vy = 0;
-		this.direction = 0b0000;
+		this.direction = new Vector(0, 0);
 		this.sprint = 1;
 	}
 }

@@ -4,14 +4,12 @@ import { Vector } from './util/Vector';
 
 let resolution = 1;
 
-let app = new Pixi.Application(
-	{
-		width: 256,
-		height: 256,
-		antialias: true,
-		transparent: false
-	}
-);
+let app = new Pixi.Application({
+	width: 256,
+	height: 256,
+	antialias: true,
+	transparent: false
+});
 
 app.renderer.autoResize = true;
 app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -88,11 +86,6 @@ function keyboard(keyCode: number) {
 	return key;
 }
 
-const DIR_UP    = 0b1000;
-const DIR_DOWN  = 0b0100;
-const DIR_LEFT  = 0b0010;
-const DIR_RIGHT = 0b0001;
-
 function setup() {
 	// text.visible = false;
 	text.text = 'CONTROLS:\nWASD  - move\nShift - faster';
@@ -111,20 +104,20 @@ function setup() {
 	app.ticker.add(dt => update(dt));
 
 	let up = keyboard(87);
-	up.press = () => { think.direction = think.direction | DIR_UP; };
-	up.release = () => { think.direction = think.direction & ~DIR_UP; };
+	up.press = () => { think.direction.addTo(new Vector(0, -1)); };
+	up.release = () => { think.direction.subtractFrom(new Vector(0, -1)); };
 
 	let down = keyboard(83);
-	down.press = () => { think.direction = think.direction | DIR_DOWN; };
-	down.release = () => { think.direction = think.direction & ~DIR_DOWN; };
+	down.press = () => { think.direction.addTo(new Vector(0, 1)); };
+	down.release = () => { think.direction.subtractFrom(new Vector(0, 1)); };
 
 	let left = keyboard(65);
-	left.press = () => { think.direction = think.direction | DIR_LEFT; };
-	left.release = () => { think.direction = think.direction & ~DIR_LEFT; };
+	left.press = () => { think.direction.addTo(new Vector(-1, 0)); };
+	left.release = () => { think.direction.subtractFrom(new Vector(-1, 0)); };
 
 	let right = keyboard(68);
-	right.press = () => { think.direction = think.direction | DIR_RIGHT; };
-	right.release = () => { think.direction = think.direction & ~DIR_RIGHT; };
+	right.press = () => { think.direction.addTo(new Vector(1, 0)); };
+	right.release = () => { think.direction.subtractFrom(new Vector(1, 0)); };
 
 	let shift = keyboard(16);
 	shift.press = () => {
@@ -140,23 +133,14 @@ function setup() {
 }
 
 function update(dt: number) {
-	if (think.direction & DIR_UP) {
-		think.vy = -think.baseMovementVelocity;
-	} else if (think.direction & DIR_DOWN) {
-		think.vy = think.baseMovementVelocity;
-	} else {
-		think.vy = 0;
-	}
-	if (think.direction & DIR_LEFT) {
-		think.vx = -think.baseMovementVelocity;
-	} else if (think.direction & DIR_RIGHT) {
-		think.vx = think.baseMovementVelocity;
-	} else {
-		think.vx = 0;
-	}
+	let direction = think.direction.copy();
+	if (direction.x !== 0 && direction.y !== 0) direction.normalize();
 
-	let dx = think.vx * think.sprint * dt;
-	let dy = think.vy * think.sprint * dt;
+	think.vx = direction.x * think.baseMovementVelocity * think.sprint;
+	think.vy = direction.y * think.baseMovementVelocity * think.sprint;
+
+	let dx = think.vx * dt;
+	let dy = think.vy * dt;
 
 	think.sprite.x += dx;
 	think.sprite.y += dy;
@@ -173,7 +157,7 @@ function update(dt: number) {
 		think.sprite.y = app.renderer.height;
 	}
 
-	debugText.text = `x = ${think.sprite.x.toFixed(4)}, y = ${think.sprite.y.toFixed(4)}\ndir = 0b${think.direction.toString(2).padStart(4, '0')}\nFPS = ${Math.round(app.ticker.FPS)}`;
+	debugText.text = `FPS = ${Math.round(app.ticker.FPS)}\nx = ${think.sprite.x.toFixed(4)}, y = ${think.sprite.y.toFixed(4)}\ndirection = ${direction.toString()}\nvx = ${think.vx}, vy = ${think.vy}`;
 	debugText.y = app.renderer.height - 5 - debugText.height;
 }
 
