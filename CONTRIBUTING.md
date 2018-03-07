@@ -28,9 +28,15 @@
 
   Please don't use our repository for PR farming. Simple changes like whitespace fixes, copyright updates, spelling mistakes, _etc_ are **very unlikely** to be accepted.
 
+- **Write your own tests!**
+
+  On top of ensuring our tests pass if you're changing something, writing your own tests for any new functionality is extremely useful for us. It ensures your code not only has predictable, expected output, but will continue to produce those outputs through modification. If someone else breaks your feature, they'll know before they even submit a change.
+
+  If you aren't familiar with writing tests, read up on the documentation for [mocha](https://mochajs.org/) and [Chai](http://chaijs.com/). These are the testing frameworks we use. Please provide your tests for classes in matching `*.spec.ts` files (_e.g_: if you have a class `Foo.ts`, you should write tests in `Foo.spec.ts`).
+
 - **Open a GitHub pull request with your suggested patch.**
 
-  Your PR should include relevant information in the body, such as the relevant issue number (if applicable), a brief summary of the problem you found, and a description of your proposed solution.
+  Your PR should include relevant information in the body. For bug reports, this should include the relevant issue number (if applicable), a brief summary of the problem you found, and a description of your proposed solution. For feature additions, this should include a "Closes #XX", where `XX` is the issue number the feature was suggested in, and a brief description of your implementatino.
 
 ## Feature requests/updates
 
@@ -39,6 +45,8 @@
   [Click here](https://github.com/pixeldothorse/frontend/issues/new?template=feature.md) to open a new feature request with a helpful template.
 
   You can write code at this point, but we'd like to judge the usefulness and quality of your suggestion before it gets added to the game. Remember to keep your repositories straight, of course; don't submit API update suggestions to the `frontend` repo, and vice versa.
+
+  If we like your suggestion, and you're able to implement it yourself, feel free to submit a PR. If not, we or another community member will consider taking a look at it ourselves.
 
 ## Thank you!
 
