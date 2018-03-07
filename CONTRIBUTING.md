@@ -12,7 +12,7 @@
 
 - **Make sure the bug hasn't already been reported by searching the [issues page](https://github.com/pixeldothorse/frontend/issues).**
 
-- If you can't find any issues matching yours, [open a new one](https://github.com/pixeldothorse/frontend/issues/new?template=bug.md).
+- If you can't find any issues matching yours, [open a new one](https://github.com/pixeldothorse/frontend/issues/new).
 
   Be sure to be as clear as possible when submitting a bug report. "It doesn't work" or "it caused an error" aren't enough for us to figure out what happened. Provide clear, reproducible steps, and a clear and accurate description of the expected vs actual result. If possible, use the provided issue templates. Video is also acceptable, but steps would be preferred.
 

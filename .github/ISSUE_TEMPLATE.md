@@ -2,6 +2,8 @@
 
 What happened? What broke?
 
+(If you're looking to suggest a feature, you should see the contributing guide instead.)
+
 ### Steps to reproduce the issue
 
 - Step
