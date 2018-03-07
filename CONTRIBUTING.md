@@ -12,7 +12,7 @@
 
 - **Make sure the bug hasn't already been reported by searching the [issues page](https://github.com/pixeldothorse/frontend/issues).**
 
-- If you can't find any issues matching yours, [open a new one](https://github.com/pixeldothorse/frontend/issues/new?template=bug).
+- If you can't find any issues matching yours, [open a new one](https://github.com/pixeldothorse/frontend/issues/new?template=bug.md).
 
   Be sure to be as clear as possible when submitting a bug report. "It doesn't work" or "it caused an error" aren't enough for us to figure out what happened. Provide clear, reproducible steps, and a clear and accurate description of the expected vs actual result. If possible, use the provided issue templates. Video is also acceptable, but steps would be preferred.
 
@@ -36,7 +36,7 @@
 
 - **Suggest the change to us through an issue.**
 
-  [Click here](https://github.com/pixeldothorse/frontend/issues/new?template=feature) to open a new feature request with a helpful template.
+  [Click here](https://github.com/pixeldothorse/frontend/issues/new?template=feature.md) to open a new feature request with a helpful template.
 
   You can write code at this point, but we'd like to judge the usefulness and quality of your suggestion before it gets added to the game. Remember to keep your repositories straight, of course; don't submit API update suggestions to the `frontend` repo, and vice versa.
 
