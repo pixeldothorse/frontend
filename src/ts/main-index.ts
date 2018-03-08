@@ -122,12 +122,8 @@ function setup() {
 	let shift = keyboard(16);
 	shift.press = () => {
 		think.sprint = think.sprintMultiplier;
-		think.vx = think.vx * think.sprint;
-		think.vy = think.vy * think.sprint;
 	};
 	shift.release = () => {
-		think.vx = think.vx / think.sprint;
-		think.vy = think.vy / think.sprint;
 		think.sprint = 1;
 	};
 }
@@ -136,14 +132,14 @@ function update(dt: number) {
 	let direction = think.direction.copy();
 	if (direction.x !== 0 && direction.y !== 0) direction.normalize();
 
-	think.vx = direction.x * think.baseMovementVelocity * think.sprint;
-	think.vy = direction.y * think.baseMovementVelocity * think.sprint;
+	let velocity = direction
+		.multiply(think.baseMovementVelocity)
+		.multiply(think.sprint);
 
-	let dx = think.vx * dt;
-	let dy = think.vy * dt;
+	let delta = velocity.multiply(dt);
 
-	think.sprite.x += dx;
-	think.sprite.y += dy;
+	think.sprite.x += delta.x;
+	think.sprite.y += delta.y;
 
 	// snap positions to renderer viewport (allow sliding just out of view)
 	if (think.sprite.x + think.sprite.width < 0) {
@@ -157,7 +153,7 @@ function update(dt: number) {
 		think.sprite.y = app.renderer.height;
 	}
 
-	debugText.text = `FPS = ${Math.round(app.ticker.FPS)}\nx = ${think.sprite.x.toFixed(4)}, y = ${think.sprite.y.toFixed(4)}\ndirection = ${direction.toString()}\nvx = ${think.vx}, vy = ${think.vy}`;
+	debugText.text = `FPS = ${Math.round(app.ticker.FPS)}\nx = ${think.sprite.x.toFixed(4)}, y = ${think.sprite.y.toFixed(4)}\ndirection = ${direction}\nvelocity  = ${velocity}`;
 	debugText.y = app.renderer.height - 5 - debugText.height;
 }
 
@@ -168,6 +164,3 @@ window.onload = () => {
 window.onresize = () => {
 	app.renderer.resize(window.innerWidth, window.innerHeight);
 };
-
-let test = new Vector(1, 2);
-(window as any).test = test;
