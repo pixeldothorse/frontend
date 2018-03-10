@@ -43,7 +43,7 @@ gulp.task('clean:html', () => {
 		.pipe(clean());
 });
 
-gulp.task('clean:rev-manifest', done => {
+gulp.task('clean:rev-manifest', () => {
 	return gulp.src('./dist/rev-manifest*.json', { read: false })
 		.pipe(clean());
 });
