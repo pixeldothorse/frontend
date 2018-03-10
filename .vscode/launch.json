@@ -8,7 +8,7 @@
 			"url": "http://localhost:8000",
 			"webRoot": "${workspaceFolder}/dist",
 			"preLaunchTask": "npm: build",
-			"runtimeExecutable": "/usr/bin/google-chrome-stable"
+			"userDataDir": false
 		}
 	]
 }
