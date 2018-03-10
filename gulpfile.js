@@ -79,7 +79,13 @@ gulp.task('build:ts', ['clean:js', 'build:images'], done => {
 		let tasks = files.map(entry => {
 			manifestCounter++;
 
-			return browserify({ entries: [entry], debug: true })
+			let browserifyOptions = { entries: [entry] };
+
+			if (process.env.NODE_ENV !== 'production') {
+				browserifyOptions.debug = true;
+			}
+
+			return browserify(browserifyOptions)
 				.plugin(tsify)
 				.transform(babelify, {
 					presets: ['modern-browsers'],
@@ -143,7 +149,7 @@ gulp.task('build:sass', ['clean:css'], done => {
 		.pipe(autoprefixer())
 		.pipe(rename({ suffix: '.min' }))
 		.pipe(production(rev()))
-		.pipe(development(sourcemaps.write('./', { sourceRoot: '../../scss' })))
+		.pipe(development(sourcemaps.write('./', { sourceRoot: '../../src/scss' })))
 		.pipe(gulp.dest('./dist/css/'))
 		.pipe(production(rev.manifest('rev-manifest-css.json')))
 		.pipe(production(gulp.dest('./dist')));
