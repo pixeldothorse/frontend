@@ -43,7 +43,7 @@ gulp.task('clean:html', () => {
 		.pipe(clean());
 });
 
-gulp.task('clean:rev-manifest', (done) => {
+gulp.task('clean:rev-manifest', done => {
 	return gulp.src('./dist/rev-manifest*.json', { read: false })
 		.pipe(clean());
 });
@@ -149,7 +149,7 @@ gulp.task('build:sass', ['clean:css'], done => {
 		.pipe(production(gulp.dest('./dist')));
 });
 
-gulp.task('build:merge-rev-manifest', ['clean:rev-manifest', 'build:ts', 'build:sass'], (done) => {
+gulp.task('build:merge-rev-manifest', ['clean:rev-manifest', 'build:ts', 'build:sass'], done => {
 	if (process.env.NODE_ENV !== 'production') {
 		done();
 		return;
