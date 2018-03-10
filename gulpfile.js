@@ -103,7 +103,7 @@ gulp.task('build:ts', ['clean:js', 'build:images'], done => {
 					done(new Error());
 				})
 				.pipe(rev())
-				.pipe(sourcemaps.write('./'))
+				.pipe(sourcemaps.write('./', { sourceRoot: '../../' }))
 				.pipe(gulp.dest('./dist/js/'))
 				.pipe(rev.manifest(`rev-manifest-js-${manifestCounter}.json`))
 				.pipe(gulp.dest('./dist'))
@@ -115,14 +115,13 @@ gulp.task('build:ts', ['clean:js', 'build:images'], done => {
 					glob('./dist/js/**.min.js', (err, files) => {
 						if (err) {
 							errors.push(err.message);
-							return;
 						}
 
-						files.map(file => {
-							sorcery.load(file).then(chain => {
-								chain.write();
-							}).catch(() => {});
-						});
+						// files.map(file => {
+						// 	sorcery.load(file).then(chain => {
+						// 		chain.write();
+						// 	}).catch(() => {});
+						// });
 					});
 				});
 		});
@@ -153,7 +152,7 @@ gulp.task('build:sass', ['clean:css'], done => {
 		.pipe(autoprefixer())
 		.pipe(rename({ suffix: '.min' }))
 		.pipe(rev())
-		.pipe(sourcemaps.write('./'))
+		.pipe(sourcemaps.write('./', { sourceRoot: '../../scss' }))
 		.pipe(gulp.dest('./dist/css/'))
 		.pipe(rev.manifest('rev-manifest-css.json'))
 		.pipe(gulp.dest('./dist'))

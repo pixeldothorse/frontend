@@ -1,0 +1,14 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch Chrome",
+			"type": "chrome",
+			"request": "launch",
+			"url": "http://localhost:8000",
+			"webRoot": "${workspaceFolder}/dist",
+			"preLaunchTask": "npm: build",
+			"runtimeExecutable": "/usr/bin/google-chrome-stable"
+		}
+	]
+}
