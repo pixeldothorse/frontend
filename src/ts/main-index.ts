@@ -139,8 +139,6 @@ function update(dt: number) {
 
 	let delta = velocity.multiply(dt);
 
-	let s = 'aaa'.padStart(100);
-
 	think.sprite.x += delta.x;
 	think.sprite.y += delta.y;
 
