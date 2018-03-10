@@ -24,6 +24,9 @@ const merge = require('gulp-merge-json');
 const chalk = require('chalk');
 const del = require('del');
 const imagemin = require('gulp-imagemin');
+const environments = require('gulp-environments');
+const development = environments.development;
+const production = environments.production;
 
 gulp.task('clean:js', () => {
 	return gulp.src('./dist/js', { read: false })
@@ -40,7 +43,7 @@ gulp.task('clean:html', () => {
 		.pipe(clean());
 });
 
-gulp.task('clean:rev-manifest', () => {
+gulp.task('clean:rev-manifest', (done) => {
 	return gulp.src('./dist/rev-manifest*.json', { read: false })
 		.pipe(clean());
 });
@@ -55,15 +58,14 @@ gulp.task('clean', ['clean:rev-manifest', 'clean:js', 'clean:css', 'clean:html',
 gulp.task('build:images', ['clean:images'], () => {
 	return gulp.src(['./src/img/*', './src/img/**/*'])
 		.pipe(imagemin())
-		.pipe(rev())
+		.pipe(production(rev()))
 		.pipe(gulp.dest('./dist/img'))
-		.pipe(rev.manifest('rev-manifest-img.json'))
-		.pipe(gulp.dest('./dist'));
+		.pipe(production(rev.manifest('rev-manifest-img.json')))
+		.pipe(production(gulp.dest('./dist')));
 });
 
 gulp.task('build:ts', ['clean:js', 'build:images'], done => {
 	let errors = [];
-	let sourceMapsBuilt = false;
 	let manifestCounter = 0;
 
 	let imgManifest = gulp.src('./dist/rev-manifest-img.json');
@@ -95,35 +97,18 @@ gulp.task('build:ts', ['clean:js', 'build:images'], done => {
 					return opt;
 				}))
 				.pipe(buffer())
-				.pipe(sourcemaps.init({ largeFile: true, loadMaps: true }))
-				.pipe(revReplace({ manifest: imgManifest }))
-				.pipe(uglify())
+				.pipe(development(sourcemaps.init({ largeFile: true, loadMaps: true })))
+				.pipe(production(revReplace({ manifest: imgManifest })))
+				.pipe(production(uglify()))
 				.on('error', error => {
 					log.error(error.message);
 					done(new Error());
 				})
-				.pipe(rev())
-				.pipe(sourcemaps.write('./', { sourceRoot: '../../' }))
+				.pipe(production(rev()))
+				.pipe(development(sourcemaps.write('./', { sourceRoot: '../../' })))
 				.pipe(gulp.dest('./dist/js/'))
-				.pipe(rev.manifest(`rev-manifest-js-${manifestCounter}.json`))
-				.pipe(gulp.dest('./dist'))
-				.on('finish', () => {
-					if (sourceMapsBuilt) return;
-
-					sourceMapsBuilt = true;
-
-					glob('./dist/js/**.min.js', (err, files) => {
-						if (err) {
-							errors.push(err.message);
-						}
-
-						// files.map(file => {
-						// 	sorcery.load(file).then(chain => {
-						// 		chain.write();
-						// 	}).catch(() => {});
-						// });
-					});
-				});
+				.pipe(production(rev.manifest(`rev-manifest-js-${manifestCounter}.json`)))
+				.pipe(production(gulp.dest('./dist')));
 		});
 
 		es.merge(tasks).on('end', () => {
@@ -140,9 +125,15 @@ gulp.task('build:ts', ['clean:js', 'build:images'], done => {
 });
 
 gulp.task('build:sass', ['clean:css'], done => {
-	gulp.src(['./src/scss/*.scss', './src/scss/**/*.scss'])
-		.pipe(sourcemaps.init())
-		.pipe(sass({ outputStyle: 'compressed' }).on('error', error => {
+	let sassOptions = {};
+
+	if (process.env.NODE_ENV === 'production') {
+		sassOptions.outputStyle = 'compressed';
+	}
+
+	return gulp.src(['./src/scss/*.scss', './src/scss/**/*.scss'])
+		.pipe(development(sourcemaps.init()))
+		.pipe(sass(sassOptions).on('error', error => {
 			error.showStack = false;
 			error.toString = function () {
 				return this.message;
@@ -151,15 +142,19 @@ gulp.task('build:sass', ['clean:css'], done => {
 		}))
 		.pipe(autoprefixer())
 		.pipe(rename({ suffix: '.min' }))
-		.pipe(rev())
-		.pipe(sourcemaps.write('./', { sourceRoot: '../../scss' }))
+		.pipe(production(rev()))
+		.pipe(development(sourcemaps.write('./', { sourceRoot: '../../scss' })))
 		.pipe(gulp.dest('./dist/css/'))
-		.pipe(rev.manifest('rev-manifest-css.json'))
-		.pipe(gulp.dest('./dist'))
-		.on('end', done);
+		.pipe(production(rev.manifest('rev-manifest-css.json')))
+		.pipe(production(gulp.dest('./dist')));
 });
 
-gulp.task('build:merge-rev-manifest', ['clean:rev-manifest', 'build:ts', 'build:sass'], () => {
+gulp.task('build:merge-rev-manifest', ['clean:rev-manifest', 'build:ts', 'build:sass'], (done) => {
+	if (process.env.NODE_ENV !== 'production') {
+		done();
+		return;
+	}
+
 	return gulp.src(['./dist/rev-manifest-css.json', './dist/rev-manifest-js-*.json', './dist/rev-manifest-img.json'])
 		.pipe(merge({ fileName: 'rev-manifest.json' }))
 		.pipe(gulp.dest('./dist'));
@@ -171,8 +166,8 @@ gulp.task('build', ['clean:html', 'build:merge-rev-manifest'], () => {
 	let manifest = gulp.src('./dist/rev-manifest.json');
 
 	return gulp.src(['src/*.html', 'src/**/*.html'])
-		.pipe(revReplace({ manifest: manifest }))
-		.pipe(htmlmin({ collapseWhitespace: true }))
+		.pipe(production(revReplace({ manifest: manifest })))
+		.pipe(production(htmlmin({ collapseWhitespace: true })))
 		.pipe(gulp.dest('./dist/'))
 		.on('end', () => {
 			log.info(chalk.bold.green('Build completed!'));
