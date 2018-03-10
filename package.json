@@ -43,7 +43,6 @@
     "gulp-uglify-es": "^1.0.1",
     "gulp-watch": "^5.0.0",
     "mocha": "^5.0.1",
-    "sorcery": "^0.10.0",
     "ts-node": "^5.0.1",
     "tsify": "^3.0.4",
     "tslint": "^5.9.1",

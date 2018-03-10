@@ -16,7 +16,6 @@ const rename = require('gulp-rename');
 const babelify = require('babelify');
 const autoprefixer = require('gulp-autoprefixer');
 const watch = require('gulp-watch');
-const sorcery = require('sorcery');
 const clean = require('gulp-clean');
 const rev = require('gulp-rev');
 const revReplace = require('gulp-rev-replace');
