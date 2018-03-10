@@ -87,7 +87,7 @@ gulp.task('build:ts', ['clean:js', 'build:images'], done => {
 			return browserify(browserifyOptions)
 				.plugin(tsify)
 				.transform(babelify, {
-					presets: ['modern-browsers'],
+					presets: ['env'],
 					extensions: ['.tsx', '.ts']
 				})
 				.bundle()

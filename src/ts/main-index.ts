@@ -1,3 +1,4 @@
+import 'babel-polyfill'; // NOTE: Required at the top of **ALL** entry points!
 import * as Pixi from 'pixi.js';
 import { Character } from './util/Character';
 import { Vector } from './util/Vector';
@@ -137,6 +138,8 @@ function update(dt: number) {
 		.multiply(think.sprint);
 
 	let delta = velocity.multiply(dt);
+
+	let s = 'aaa'.padStart(100);
 
 	think.sprite.x += delta.x;
 	think.sprite.y += delta.y;

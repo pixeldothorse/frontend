@@ -1,5 +1,7 @@
 {
 	"presets": [
-		["modern-browsers"]
+		["env", {
+			"useBuiltIns": "entry"
+		}]
 	]
 }
