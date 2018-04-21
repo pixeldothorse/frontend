@@ -7,8 +7,7 @@
 			"request": "launch",
 			"url": "http://localhost:8000",
 			"webRoot": "${workspaceFolder}/dist",
-			"preLaunchTask": "npm: build",
-			"userDataDir": false
+			"preLaunchTask": "npm: build"
 		}
 	]
 }
