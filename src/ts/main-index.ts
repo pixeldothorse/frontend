@@ -154,7 +154,11 @@ function update(dt: number) {
 		think.sprite.y = app.renderer.height;
 	}
 
-	debugText.text = `FPS = ${Math.round(app.ticker.FPS)}\nx = ${think.sprite.x.toFixed(4)}, y = ${think.sprite.y.toFixed(4)}\ndirection = ${direction}\nvelocity  = ${velocity}`;
+	debugText.text = `FPS = ${Math.round(app.ticker.FPS)}
+x = ${think.sprite.x.toFixed(4)}, y = ${think.sprite.y.toFixed(4)}
+direction = ${direction}
+velocity  = ${velocity}
+renderer  = ${app.renderer.type === Pixi.RENDERER_TYPE.CANVAS ? 'canvas' : (app.renderer.type === Pixi.RENDERER_TYPE.WEBGL ? 'WebGL' : 'unknown')}`;
 	debugText.y = app.renderer.height - 5 - debugText.height;
 }
 
